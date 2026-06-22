@@ -86,7 +86,7 @@ Controls
 | N                       | Toggle Newtonian Gravity on/off                                 |
 | U                       | Toggle ambient heat on/off                                      |
 | Ctrl + I                | Install powder toy, for loading saves/stamps by double clicking |
-| Backtick                | Toggle console                                                  |
+| \`                      | Toggle console                                                  |
 | =                       | Reset pressure and velocity map                                 |
 | Ctrl + =                | Reset Electricity                                               |
 | \[                      | Decrease brush size                                             |
