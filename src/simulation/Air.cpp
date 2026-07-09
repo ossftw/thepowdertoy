@@ -150,7 +150,7 @@ void Air::update_airh(void)
 				{
 					tx += stepX;
 					ty += stepY;
-					if (bmap_blockairh[(int)(ty+0.5f)][(int)(tx+0.5f)]&0x8)
+					if (!InCellBounds(int(tx+0.5f), int(ty+0.5f)) || bmap_blockairh[(int)(ty+0.5f)][(int)(tx+0.5f)]&0x8)
 					{
 						tx -= stepX;
 						ty -= stepY;
@@ -168,7 +168,7 @@ void Air::update_airh(void)
 			auto j = (int)ty;
 			tx -= i;
 			ty -= j;
-			if (!(bmap_blockairh[y][x]&0x8) && i>=0 && i<XCELLS-1 && j>=0 && j<YCELLS-1)
+			if (!(bmap_blockairh[y][x]&0x8) && i>=0 && i<XCELLS-1 && j>=0 && j<YCELLS-1 && tx >= 0.0f && ty >= 0.0f)
 			{
 				auto odh = dh;
 				dh *= 1.0f - AIR_VADV;
@@ -402,7 +402,7 @@ void Air::update_air(void)
 					{
 						tx += stepX;
 						ty += stepY;
-						if (bmap_blockair[(int)(ty+0.5f)][(int)(tx+0.5f)])
+						if (!InCellBounds(int(tx+0.5f), int(ty+0.5f)) || bmap_blockair[(int)(ty+0.5f)][(int)(tx+0.5f)])
 						{
 							tx -= stepX;
 							ty -= stepY;
@@ -420,7 +420,7 @@ void Air::update_air(void)
 				auto j = (int)ty;
 				tx -= i;
 				ty -= j;
-				if (!bmap_blockair[y][x] && i>=2 && i<XCELLS-3 && j>=2 && j<YCELLS-3)
+				if (!bmap_blockair[y][x] && i>=2 && i<XCELLS-3 && j>=2 && j<YCELLS-3 && tx >= 0.0f && ty >= 0.0f)
 				{
 					dx *= 1.0f - AIR_VADV;
 					dy *= 1.0f - AIR_VADV;
