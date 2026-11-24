@@ -3,10 +3,10 @@
 #include "Sign.h"
 #include "Stickman.h"
 #include "common/tpt-rand.h"
-#include "common/Bson.h"
 #include <vector>
 #include <array>
 #include <cstdint>
+#include <json/json.h>
 
 class Snapshot
 {
@@ -34,15 +34,17 @@ public:
 
 	std::vector<Particle> PortalParticles;
 	std::vector<int> WirelessData;
-	std::vector<playerst> stickmen;
+	std::vector<playerst> players;
+	std::vector<fighterst> fighters;
 	std::vector<sign> signs;
 
+	unsigned char fighcount;
 	uint64_t FrameCount;
 	RNG::State RngState;
 
 	uint32_t Hash() const;
 
-	Bson Authors;
+	Json::Value Authors;
 
 	virtual ~Snapshot() = default;
 };

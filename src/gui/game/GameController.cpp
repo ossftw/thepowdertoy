@@ -496,12 +496,12 @@ void GameController::CopyRegion(ui::Point point1, ui::Point point2)
 	auto newSave = gameModel->GetSimulation()->Save(gameModel->GetIncludePressure() != gameView->ShiftBehaviour(), SaneSaveRect(point1, point2));
 	if(newSave)
 	{
-		Bson clipboardInfo;
+		Json::Value clipboardInfo;
 		clipboardInfo["type"] = "clipboard";
 		auto user = Client::Ref().GetAuthUser();
 		clipboardInfo["username"] = user ? user->Username : ByteString("");
-		clipboardInfo["date"] = int64_t(time(nullptr));
-		Client::Ref().SaveAuthorInfo(clipboardInfo);
+		clipboardInfo["date"] = (Json::Value::UInt64)time(nullptr);
+		Client::Ref().SaveAuthorInfo(&clipboardInfo);
 		newSave->authors = clipboardInfo;
 
 		newSave->paused = gameModel->GetPaused();
@@ -699,32 +699,50 @@ bool GameController::KeyRelease(int key, int scan, bool repeat, bool shift, bool
 	if (ret)
 	{
 		Simulation * sim = gameModel->GetSimulation();
-		if (key == SDLK_RIGHT || key == SDLK_LEFT)
+
+		switch (key)
 		{
-			sim->player.pcomm = sim->player.comm;  //Saving last movement
-			sim->player.comm = (int)(sim->player.comm)&12;  //Stop command
-		}
-		else if (key == SDLK_UP)
-		{
-			sim->player.comm = (int)(sim->player.comm)&11;
-		}
-		else if (key == SDLK_DOWN)
-		{
-			sim->player.comm = (int)(sim->player.comm)&7;
+			case SDLK_LEFT:
+				{
+					sim->player.pcomm = sim->player.comm;  //Saving last movement
+					sim->player.comm = (int)(sim->player.comm)&14;  // Clear 0x1
+				}
+				break;
+			case SDLK_RIGHT:
+				{
+					sim->player.pcomm = sim->player.comm;  //Saving last movement
+					sim->player.comm = (int)(sim->player.comm)&13;  // Clear 0x2
+				}
+				break;
+			case SDLK_UP:
+				sim->player.comm = (int)(sim->player.comm)&11; // Clear 0x4
+				break;
+			case SDLK_DOWN:
+				sim->player.comm = (int)(sim->player.comm)&7; // Clear 0x8
+				break;
 		}
 
-		if (scan == SDL_SCANCODE_D || scan == SDL_SCANCODE_A)
+		// STKM2
+		switch (scan)
 		{
-			sim->player2.pcomm = sim->player2.comm;  //Saving last movement
-			sim->player2.comm = (int)(sim->player2.comm)&12;  //Stop command
-		}
-		else if (scan == SDL_SCANCODE_W)
-		{
-			sim->player2.comm = (int)(sim->player2.comm)&11;
-		}
-		else if (scan == SDL_SCANCODE_S)
-		{
-			sim->player2.comm = (int)(sim->player2.comm)&7;
+			case SDL_SCANCODE_A:
+				{
+					sim->player2.pcomm = sim->player2.comm;  //Saving last movement
+					sim->player2.comm = (int)(sim->player2.comm)&14;  // Clear 0x1
+				}
+				break;
+			case SDL_SCANCODE_D:
+				{
+					sim->player2.pcomm = sim->player2.comm;  //Saving last movement
+					sim->player2.comm = (int)(sim->player2.comm)&13;  // Clear 0x2
+				}
+				break;
+			case SDL_SCANCODE_W:
+				sim->player2.comm = (int)(sim->player2.comm)&11; // Clear 0x4
+				break;
+			case SDL_SCANCODE_S:
+				sim->player2.comm = (int)(sim->player2.comm)&7; // Clear 0x8
+				break;
 		}
 	}
 	return ret;
@@ -1163,18 +1181,9 @@ void GameController::SetActiveTool(int toolSelection, Tool * tool)
 	if (gameModel->GetActiveMenu() == SC_DECO && toolSelection == 2)
 		toolSelection = 0;
 	gameModel->SetActiveTool(toolSelection, tool);
-	gameModel->GetRendererSettings().gravityZonesEnabled = false;
 	if (toolSelection == 3)
 		gameModel->GetSimulation()->replaceModeSelected = tool->ToolID;
 	gameModel->SetLastTool(tool);
-	for(int i = 0; i < 3; i++)
-	{
-		auto *activeTool = gameModel->GetActiveTool(i);
-		if (activeTool && activeTool->Identifier == "DEFAULT_WL_GRVTY")
-		{
-			gameModel->GetRendererSettings().gravityZonesEnabled = true;
-		}
-	}
 	tool->Select(toolSelection);
 }
 
@@ -1272,13 +1281,13 @@ void GameController::OpenLocalSaveWindow(bool asCurrent)
 		}
 		else if (gameModel->GetSaveFile())
 		{
-			Bson localSaveInfo;
+			Json::Value localSaveInfo;
 			localSaveInfo["type"] = "localsave";
 			auto user = Client::Ref().GetAuthUser();
 			localSaveInfo["username"] = user ? user->Username : ByteString("");
 			localSaveInfo["title"] = gameModel->GetSaveFile()->GetName();
-			localSaveInfo["date"] = int64_t(time(nullptr));
-			Client::Ref().SaveAuthorInfo(localSaveInfo);
+			localSaveInfo["date"] = (Json::Value::UInt64)time(nullptr);
+			Client::Ref().SaveAuthorInfo(&localSaveInfo);
 			gameSave->authors = localSaveInfo;
 
 			Platform::MakeDirectory(LOCAL_SAVE_DIR);
@@ -1497,7 +1506,7 @@ void GameController::OpenSaveWindow()
 void GameController::SaveAsCurrent()
 {
 	auto user = gameModel->GetUser();
-	if (gameModel->GetSave() && user && user->Username == gameModel->GetSave()->GetUserName())
+	if (gameModel->GetSave() && gameModel->GetSave()->IsOwn())
 	{
 		Simulation * sim = gameModel->GetSimulation();
 		auto gameSave = sim->Save(gameModel->GetIncludePressure() != gameView->ShiftBehaviour(), RES.OriginRect());

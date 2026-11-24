@@ -135,11 +135,11 @@ int Element_FIRE_update(UPDATE_FUNC_ARGS)
 				}
 				else if (parts[i].temp >= 5000 && sim->rng.chance(1, 5))
 				{
-					//@ LAVA(ROCK) -> LAVA(URAN/PLUT/TUNG)
+					//@ LAVA(ROCK) -> LAVA(URAN/STNE/TUNG)
 					if (sim->rng.chance(1, 5))
 						parts[i].ctype = PT_URAN;
 					else if (sim->rng.chance(1, 5))
-						parts[i].ctype = PT_PLUT;
+						parts[i].ctype = PT_NONE;
 					else
 						parts[i].ctype = PT_TUNG;
 				}
@@ -361,9 +361,9 @@ static int updateLegacy(UPDATE_FUNC_ARGS)
 					}
 					else
 					{
+						sim->part_change_type(i, x, y, parts[i].ctype ? parts[i].ctype : PT_STNE);
 						parts[i].life = 0;
-						parts[i].ctype = PT_NONE;//rt;
-						sim->part_change_type(i,x,y,(parts[i].ctype)?parts[i].ctype:PT_STNE);
+						parts[i].ctype = PT_NONE;
 						return 1;
 					}
 				}
@@ -391,9 +391,9 @@ static int updateLegacy(UPDATE_FUNC_ARGS)
 					}
 					if (t==PT_LAVA)
 					{
+						sim->part_change_type(i, x, y, parts[i].ctype ? parts[i].ctype : PT_STNE);
 						parts[i].life = 0;
 						parts[i].ctype = PT_NONE;
-						sim->part_change_type(i,x,y,(parts[i].ctype)?parts[i].ctype:PT_STNE);
 					}
 				}
 			}

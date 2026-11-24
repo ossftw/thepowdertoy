@@ -65,12 +65,15 @@ struct SnapshotDelta
 
 	HunkVector<uint32_t> PortalParticles;
 	HunkVector<int> WirelessData;
-	HunkVector<uint32_t> stickmen;
+	HunkVector<uint32_t> players;
+	HunkVector<uint32_t> fighters;
 	SingleDiff<std::vector<sign>> signs;
+
+	SingleDiff<unsigned char> fighcount;
 	SingleDiff<uint64_t> FrameCount;
 	SingleDiff<RNG::State> RngState;
 
-	SingleDiff<Bson> Authors;
+	SingleDiff<Json::Value> Authors;
 
 	static std::unique_ptr<SnapshotDelta> FromSnapshots(const Snapshot &oldSnap, const Snapshot &newSnap);
 	std::unique_ptr<Snapshot> Forward(const Snapshot &oldSnap);

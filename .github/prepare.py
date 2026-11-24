@@ -189,7 +189,7 @@ for        arch,     platform,         libc,   statdyn, bplatform,         runso
 	(     'arm',    'android',     'bionic',  'static',   'linux', 'ubuntu-22.04', '.apk',         'check',      None,         None,                     None,   'debug',        0, False ), # priority = 0: rarely used debug build
 	(     'arm',    'android',     'bionic',  'static',   'linux', 'ubuntu-22.04', '.apk',       'publish',    '.dbg',         None,     'arm-and-gcc-static', 'release',       10, False ),
 	( 'aarch64',    'android',     'bionic',  'static',   'linux', 'ubuntu-22.04', '.apk',         'check',      None,         None,                     None,   'debug',        0, False ), # priority = 0: rarely used debug build
-	( 'aarch64',    'android',     'bionic',  'static',   'linux', 'ubuntu-22.04', '.apk',       'publish',    '.dbg',         None,   'arm64-and-gcc-static', 'release',       10,  True ),
+	( 'aarch64',    'android',     'bionic',  'static',   'linux', 'ubuntu-22.04', '.apk',       'publish',    '.dbg',         None,   'arm64-and-gcc-static', 'release',       10, False ), # TODO: enable lint once android clang-tidy stops being dumb
 	(  'wasm32', 'emscripten', 'emscripten',  'static',   'linux', 'ubuntu-22.04', '.tar',         'check',      None,         None,                     None,   'debug',        0, False ), # priority = 0: rarely used debug build
 	(  'wasm32', 'emscripten', 'emscripten',  'static',   'linux', 'ubuntu-22.04', '.tar',       'publish','.wasm.dbg','emscripten',      'wasm32-ems-static', 'release',       10, False ), # TODO: enable lint once emscripten ships clang-tidy
 ]:
@@ -255,7 +255,7 @@ for        arch,     platform,         libc,   statdyn, bplatform,         runso
 		'msys2_msystem': arch == 'x86_64' and 'UCRT64' or 'MINGW32',
 		# this list doesn't have to mirror the one in build.sh perfectly
 		# but the packages listed here get cached properly and take less time to install
-		'msys2_cache_install': arch == 'x86_64' and 'git curl patch mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf mingw-w64-ucrt-x86_64-bzip2 mingw-w64-ucrt-x86_64-luajit mingw-w64-ucrt-x86_64-jsoncpp mingw-w64-ucrt-x86_64-curl mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-libpng mingw-w64-ucrt-x86_64-meson mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-pip mingw-w64-ucrt-x86_64-fftw cmake p7zip jq' or 'git curl patch mingw-w64-i686-gcc mingw-w64-i686-meson mingw-w64-i686-python mingw-w64-i686-python-pip cmake p7zip jq',
+		'msys2_cache_install': arch == 'x86_64' and 'git curl patch mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf mingw-w64-ucrt-x86_64-bzip2 mingw-w64-ucrt-x86_64-luajit mingw-w64-ucrt-x86_64-jsoncpp mingw-w64-ucrt-x86_64-curl mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-libpng mingw-w64-ucrt-x86_64-meson mingw-w64-ucrt-x86_64-fftw python python-pip cmake p7zip jq' or 'git curl patch mingw-w64-i686-gcc mingw-w64-i686-meson mingw-w64-i686-python python-pip cmake p7zip jq',
 		'package_suffix': suffix,
 		'package_mode': mode,
 		'publish': publish and 'yes' or 'no',

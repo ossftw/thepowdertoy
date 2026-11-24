@@ -1039,7 +1039,7 @@ static int loadStamp(lua_State *L)
 		lsi->sim->Load(gameSave.get(), includePressure, { quoX, quoY });
 		lua_pushinteger(L, 1);
 
-		if (gameSave->authors.GetSize())
+		if (gameSave->authors.size())
 		{
 			gameSave->authors["type"] = "luastamp";
 			client.MergeStampAuthorInfo(gameSave->authors);
@@ -2167,6 +2167,7 @@ void LuaSimulation::Open(lua_State *L)
 	LCONST(FLAG_SKIPMOVE);
 	LCONST(FLAG_MOVABLE);
 	LCONST(FLAG_PHOTDECO);
+	LCONST(FLAG_OLDSTKM);
 
 	LCONST(PMAPBITS);
 	LCONST(PMAPMASK);

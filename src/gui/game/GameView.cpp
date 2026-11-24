@@ -1663,6 +1663,10 @@ void GameView::OnKeyPress(int key, int scan, bool repeat, bool shift, bool ctrl,
 	{
 		c->LoadRenderPreset(12);
 	}
+	else if (shift && key == '7')
+	{
+		c->LoadRenderPreset(13);
+	}
 	else if (key >= '0' && key <= '9')
 	{
 		c->LoadRenderPreset(key-'0');
@@ -2434,9 +2438,7 @@ void GameView::OnDraw()
 				{
 					if (sample.particle.type == PT_CONV)
 					{
-						String elemName = c->ElementResolve(
-							TYP(sample.particle.tmp),
-							ID(sample.particle.tmp));
+						String elemName = c->ElementResolve(sample.particle.tmp, 0);
 						if (elemName == "")
 							sampleInfo << ", Tmp: " << sample.particle.tmp;
 						else

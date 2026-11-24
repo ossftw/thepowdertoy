@@ -95,7 +95,7 @@ struct RenderableSimulation
 
 	playerst player;
 	playerst player2;
-	playerst fighters[MAX_FIGHTERS]; //Defined in Stickman.h
+	fighterst fighters[MAX_FIGHTERS]; //Defined in Stickman.h
 
 	float vx[YCELLS][XCELLS];
 	float vy[YCELLS][XCELLS];
@@ -110,6 +110,7 @@ struct RenderableSimulation
 	int photons[YRES][XRES];
 
 	int aheat_enable = 0;
+	int edgeMode = EDGE_VOID;
 
 	bool useLuaCallbacks = false;
 };
@@ -151,7 +152,6 @@ public:
 
 	unsigned int pmap_count[YRES][XRES];
 
-	int edgeMode = EDGE_VOID;
 	int gravityMode = GRAV_VERTICAL;
 	float customGravityX = 0;
 	float customGravityY = 0;

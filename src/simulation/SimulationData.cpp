@@ -231,6 +231,19 @@ void SimulationData::init_can_move()
 	can_move[PT_TRON][PT_SWCH] = 3;
 	can_move[PT_ELEC][PT_RSST] = 2;
 	can_move[PT_ELEC][PT_RSSS] = 2;
+
+	// Special cases for stickmen
+	for (int sm : {PT_STKM, PT_STKM2, PT_FIGH})
+	{
+		can_move[sm][PT_EMBR] = 2;
+		can_move[sm][PT_LIGH] = 2;
+		can_move[sm][PT_VIBR] = 0;
+		can_move[sm][PT_BVBR] = 0;
+		can_move[sm][PT_BHOL] = 0;
+		can_move[sm][PT_NBHL] = 0;
+		can_move[sm][PT_VOID] = 0;
+		can_move[sm][PT_PVOD] = 0;
+	}
 }
 
 const CustomGOLData *SimulationData::GetCustomGOLByRule(int rule) const
@@ -346,4 +359,38 @@ float SimulationData::HeatCapacityOf(const Particle &p) const
 		return elements[p.type].HeatCapacity + elements[p.ctype].HeatCapacity;
 	else
 		return elements[p.type].HeatCapacity;
+}
+
+// From 0 to 100, where 0 is nothing and 100 is an indestructible element
+float SimulationData::DestructibilityScore(int t) const
+{
+	if (t <= 0 || t >= PT_NUM)
+		return 0;
+
+	// These elements have nonzero Hardness, yet they are indestructible
+	if (t == PT_CLNE || t == PT_PCLN)
+		return 100;
+
+	auto prop = elements[t].Properties;
+
+	if (prop & TYPE_ENERGY)
+		return 10;
+	else if (prop & TYPE_GAS)
+		return 20;
+	else if (prop & TYPE_LIQUID)
+		return 30;
+	else if (prop & TYPE_PART)
+		return 40;
+	else if (elements[t].Flammable > 0)
+		return 50;
+	else if (elements[t].HighPressureTransition != (-1) || elements[t].LowPressureTransition != (-1))
+		return 60;
+	else if (elements[t].HighTemperatureTransition != (-1) || elements[t].LowTemperatureTransition != (-1))
+		return 70;
+	else if (elements[t].Hardness > 0)
+		return 80;
+	else if (t == PT_VIBR || t == PT_RSSS || t == PT_HEAC)
+		return 90;
+
+	return 100;
 }
